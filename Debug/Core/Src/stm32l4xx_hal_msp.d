@@ -29,21 +29,21 @@ Core/Src/stm32l4xx_hal_msp.o: ../Core/Src/stm32l4xx_hal_msp.c \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h \
  ../Core/Inc/stm32l4s5i_iot01_accelero.h ../Core/Inc/stm32l4s5i_iot01.h \
- /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/lsm6dsl/lsm6dsl.h \
- /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/lsm6dsl/../Common/accelero.h \
- /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/lsm6dsl/../Common/gyro.h \
+ /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lsm6dsl/lsm6dsl.h \
+ /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lsm6dsl/../Common/accelero.h \
+ /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lsm6dsl/../Common/gyro.h \
  ../Core/Inc/stm32l4s5i_iot01_tsensor.h \
- /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/hts221/hts221.h \
- /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/hts221/../Common/hsensor.h \
- /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/hts221/../Common/tsensor.h \
+ /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/hts221/hts221.h \
+ /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/hts221/../Common/hsensor.h \
+ /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/hts221/../Common/tsensor.h \
  ../Core/Inc/stm32l4s5i_iot01_psensor.h \
- /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/lps22hb/lps22hb.h \
- /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/lps22hb/../Common/psensor.h \
- /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/lps22hb/../Common/tsensor.h \
+ /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lps22hb/lps22hb.h \
+ /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lps22hb/../Common/psensor.h \
+ /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lps22hb/../Common/tsensor.h \
  ../Core/Inc/stm32l4s5i_iot01_gyro.h \
  ../Core/Inc/stm32l4s5i_iot01_magneto.h \
- /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/lis3mdl/lis3mdl.h \
- /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/lis3mdl/../Common/magneto.h \
+ /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lis3mdl/lis3mdl.h \
+ /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lis3mdl/../Common/magneto.h \
  ../Core/Inc/stm32l4s5i_iot01_hsensor.h
 ../Core/Inc/main.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:
@@ -77,19 +77,19 @@ Core/Src/stm32l4xx_hal_msp.o: ../Core/Src/stm32l4xx_hal_msp.c \
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h:
 ../Core/Inc/stm32l4s5i_iot01_accelero.h:
 ../Core/Inc/stm32l4s5i_iot01.h:
-/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/lsm6dsl/lsm6dsl.h:
-/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/lsm6dsl/../Common/accelero.h:
-/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/lsm6dsl/../Common/gyro.h:
+/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lsm6dsl/lsm6dsl.h:
+/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lsm6dsl/../Common/accelero.h:
+/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lsm6dsl/../Common/gyro.h:
 ../Core/Inc/stm32l4s5i_iot01_tsensor.h:
-/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/hts221/hts221.h:
-/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/hts221/../Common/hsensor.h:
-/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/hts221/../Common/tsensor.h:
+/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/hts221/hts221.h:
+/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/hts221/../Common/hsensor.h:
+/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/hts221/../Common/tsensor.h:
 ../Core/Inc/stm32l4s5i_iot01_psensor.h:
-/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/lps22hb/lps22hb.h:
-/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/lps22hb/../Common/psensor.h:
-/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/lps22hb/../Common/tsensor.h:
+/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lps22hb/lps22hb.h:
+/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lps22hb/../Common/psensor.h:
+/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lps22hb/../Common/tsensor.h:
 ../Core/Inc/stm32l4s5i_iot01_gyro.h:
 ../Core/Inc/stm32l4s5i_iot01_magneto.h:
-/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/lis3mdl/lis3mdl.h:
-/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Drivers/Components/../Components/lis3mdl/../Common/magneto.h:
+/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lis3mdl/lis3mdl.h:
+/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lis3mdl/../Common/magneto.h:
 ../Core/Inc/stm32l4s5i_iot01_hsensor.h:

@@ -59,34 +59,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := UART-Sensors-OS-STM32
+BUILD_ARTIFACT_NAME := space-invaders
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-UART-Sensors-OS-STM32.elf \
+space-invaders.elf \
 
 MAP_FILES += \
-UART-Sensors-OS-STM32.map \
+space-invaders.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-UART-Sensors-OS-STM32.list \
+space-invaders.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: UART-Sensors-OS-STM32.elf secondary-outputs
+main-build: space-invaders.elf secondary-outputs
 
 # Tool invocations
-UART-Sensors-OS-STM32.elf UART-Sensors-OS-STM32.map: $(OBJS) $(USER_OBJS) /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/STM32L4S5VITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "UART-Sensors-OS-STM32.elf" @"objects.list" $(USER_OBJS) -Wl,--start-group $(LIBS) -Wl,--end-group -mcpu=cortex-m4 -T"/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/STM32L4S5VITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="UART-Sensors-OS-STM32.map" -Wl,--gc-sections -static -L"/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/UART-Sensors-OS-STM32/Core/Lib" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+space-invaders.elf space-invaders.map: $(OBJS) $(USER_OBJS) /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/STM32L4S5VITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "space-invaders.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/STM32L4S5VITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="space-invaders.map" -Wl,--gc-sections -static -L"/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Core/Lib" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -95,14 +95,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-UART-Sensors-OS-STM32.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "UART-Sensors-OS-STM32.list"
+space-invaders.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "space-invaders.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) UART-Sensors-OS-STM32.elf UART-Sensors-OS-STM32.list UART-Sensors-OS-STM32.map default.size.stdout
+	-$(RM) default.size.stdout space-invaders.elf space-invaders.list space-invaders.map
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
