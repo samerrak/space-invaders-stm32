@@ -1,0 +1,3 @@
+../Core/Src/util.c:14:7:calculate_pitch	1
+../Core/Src/util.c:20:9:tilt_detection	5
+../Core/Src/util.c:40:6:printOne	1

@@ -24,17 +24,13 @@
 /* USER CODE BEGIN Includes */
 #include "arm_math.h"
 #include <stdio.h>
+#include "util.h"
+#include "kalman.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-typedef struct {
-    float32_t q;  // Process noise covariance
-    float32_t r;  // Measurement noise covariance
-    float32_t x;  // Filtered value
-    float32_t p;  // Estimate error covariance
-    float32_t k;  // Kalman gain
-} kalman_state;
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -52,9 +48,9 @@ I2C_HandleTypeDef hi2c2;
 
 UART_HandleTypeDef huart1;
 
+osThreadId defaultTaskHandle;
+osThreadId processingDataHandle;
 osThreadId readSensorHandle;
-osThreadId buttonCheckHandle;
-osThreadId printUARTHandle;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -65,27 +61,21 @@ static void MX_GPIO_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_USART1_UART_Init(void);
 void StartDefaultTask(void const * argument);
-void StartTask02(void const * argument);
-void StartTask03(void const * argument);
-void tilt_detection(void);
-float kalman_filter_CMSIS(kalman_state *kstate, float measurement);
+void StartProcessData(void const * argument);
+void startReadSensor(void const * argument);
 
 /* USER CODE BEGIN PFP */
-
-void readSensors();
-void printOne(char* string, float data);
-void printThree(char* string, int data1, int data2, int data3);
+/* Private function prototypes -----------------------------------------------*/
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-/* Global variables for sensor measurements */
+/* Constants */
 #define ACCEL_THRESHOLD 10.0f  // Threshold for tilt detection
 #define X_MAP_SIZE 80
 
-float pitch_angle = 0.0f;  // Pitch angle (forward/backward)
-float roll_angle = 0.0f;   // Roll angle (left/right)
+/* Tilting detection */
 int16_t x_position = X_MAP_SIZE/2;
 
 /* Kalman Filter States */
@@ -93,6 +83,7 @@ kalman_state kalman_x = {0.07f, 2.0f, 0.0f, 1.0f, 0.0f};
 kalman_state kalman_y = {0.07f, 2.0f, 0.0f, 1.0f, 0.0f};
 kalman_state kalman_z = {0.07f, 2.0f, 0.0f, 1.0f, 0.0f};
 
+/* Acceleration data */
 int16_t raw_acceleration[3];    // Raw accelerometer data
 int16_t filtered_acceleration[3];  // Filtered accelerometer data (using Kalman filter)
 
@@ -105,21 +96,80 @@ int16_t filtered_acceleration[3];  // Filtered accelerometer data (using Kalman 
 int main(void)
 {
 
-  /* MCU Configuration*/
+  /* USER CODE BEGIN 1 */
+
+  /* USER CODE END 1 */
+
+  /* MCU Configuration--------------------------------------------------------*/
+
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
+
+  /* USER CODE BEGIN Init */
+
+  /* USER CODE END Init */
+
+  /* Configure the system clock */
   SystemClock_Config();
+
+  /* USER CODE BEGIN SysInit */
+
+  /* USER CODE END SysInit */
+
+  /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C2_Init();
   MX_USART1_UART_Init();
+  /* USER CODE BEGIN 2 */
   BSP_ACCELERO_Init();  // Initialize the accelerometer
+  /* USER CODE END 2 */
 
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+
+  /* Create the thread(s) */
+  /* definition and creation of defaultTask */
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityLow, 0, 256);
+  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+
+  /* definition and creation of processingData */
+  osThreadDef(processingData, StartProcessData, osPriorityNormal, 0, 256);
+  processingDataHandle = osThreadCreate(osThread(processingData), NULL);
+
+  /* definition and creation of readSensor */
+  osThreadDef(readSensor, startReadSensor, osPriorityHigh, 0, 256);
+  readSensorHandle = osThreadCreate(osThread(readSensor), NULL);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  readSensors();
-	  tilt_detection();
-	  HAL_Delay(50);
-  }
+    /* USER CODE END WHILE */
 
+    /* USER CODE BEGIN 3 */
+  }
   /* USER CODE END 3 */
 }
 
@@ -310,103 +360,6 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-void printOne(char* string, float data) {
-    char output[120];
-    sprintf(output, string, (int)data);
-    uint16_t len = strlen(output);
-    HAL_UART_Transmit(&huart1, (uint8_t *)output, len, 120);
-}
-
-void printThree(char* string, int data1, int data2, int data3) {
-    char output[60];
-    sprintf(output, string, data1, data2, data3);
-    uint16_t len = strlen(output);
-    HAL_UART_Transmit(&huart1, (uint8_t *)output, len, 120);
-}
-
-float kalman_filter_CMSIS(kalman_state *kstate, float measurement) {
-    float temp_p, temp_k, temp_x;
-
-    // Predict
-    arm_add_f32(&kstate->p, &kstate->q, &temp_p, 1);  // p = p + q
-
-    // Update
-    arm_add_f32(&temp_p, &kstate->r, &temp_k, 1);  // temp_k = p + r
-    temp_k = temp_p / temp_k;  // k = p / (p + r)
-
-    float temp_diff;
-    arm_sub_f32(&measurement, &kstate->x, &temp_diff, 1);  // temp_diff = measurement - x
-    arm_mult_f32(&temp_k, &temp_diff, &temp_x, 1);  // temp_x = k * (measurement - x)
-    arm_add_f32(&kstate->x, &temp_x, &temp_x, 1);  // x = x + k * (measurement - x)
-
-    // Update covariance
-    float temp_p_update;
-    float one_minus_k = 1.0f - temp_k;
-    arm_mult_f32(&one_minus_k, &temp_p, &temp_p_update, 1);  // p = (1 - k) * p
-
-    // Save updated values
-    kstate->p = temp_p_update;
-    kstate->x = temp_x;
-    kstate->k = temp_k;
-
-    return kstate->x;
-}
-
-/* Read sensor */
-void readSensors(void) {
-    // Read raw accelerometer data
-    BSP_ACCELERO_AccGetXYZ(raw_acceleration);
-
-    // Apply Kalman filter to each axis
-    filtered_acceleration[0] = kalman_filter_CMSIS(&kalman_x, (float32_t)raw_acceleration[0]);
-    filtered_acceleration[1] = kalman_filter_CMSIS(&kalman_y, (float32_t)raw_acceleration[1]);
-    filtered_acceleration[2] = kalman_filter_CMSIS(&kalman_z, (float32_t)raw_acceleration[2]);
-}
-
-float calculate_pitch(int16_t *accel_data) {
-    // Pitch = atan2(accel_data[0], sqrt(accel_data[1]^2 + accel_data[2]^2))
-    return atan2(accel_data[0], sqrt(accel_data[1] * accel_data[1] + accel_data[2] * accel_data[2])) * 180.0 / M_PI;
-}
-
-float calculate_roll(int16_t *accel_data) {
-    // Roll = atan2(accel_data[1], sqrt(accel_data[0]^2 + accel_data[2]^2))
-    return atan2(accel_data[1], sqrt(accel_data[0] * accel_data[0] + accel_data[2] * accel_data[2])) * 180.0 / M_PI;
-}
-
-/* Tilt detection logic */
-void tilt_detection() {
-    float pitch, roll;
-
-    // Calculate pitch (forward-backward tilt)
-    pitch = calculate_pitch(filtered_acceleration);
-
-    // Calculate roll (left-right tilt)
-    roll = calculate_roll(filtered_acceleration);
-
-    //printOne("Pitch: %.2f\n", pitch);  // Print pitch angle
-    //printOne("Roll: %.2f\n", roll);    // Print roll angle
-
-    // Detect tilt direction for pitch (forward-backward)
-    if (pitch > ACCEL_THRESHOLD && x_position < 80) {
-        printOne("Tilted right, position: %d\r\n", x_position);
-        x_position++;
-    } else if (pitch < -ACCEL_THRESHOLD && x_position > 0) {
-        printOne("Tilted left, position: %d\r\n", x_position);
-        x_position--;
-    } else {
-        printOne("No change in position: %d\r\n", x_position);
-    }
-
-    // Detect tilt direction for roll (left-right)
-    if (roll > ACCEL_THRESHOLD) {
-        printOne("Tilted forward\r\n", 0);  // Print tilt direction
-    } else if (roll < -ACCEL_THRESHOLD) {
-        printOne("Tilted backward\r\n", 0);  // Print tilt direction
-    } else {
-        //printOne("No significant roll tilt\n", 0);  // Print if no significant tilt
-    }
-}
-
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
     // Report stack overflow
@@ -415,8 +368,6 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
     // Optionally halt the system for debugging
     while (1);
 }
-
-
 
 /* USER CODE END 4 */
 
@@ -433,46 +384,53 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	osDelay(1000);
-	readSensors();
+	osDelay(300);
+    printOne("X position: %d\r\n", x_position);
+
   }
   /* USER CODE END 5 */
 }
 
-/* USER CODE BEGIN Header_StartTask02 */
+/* USER CODE BEGIN Header_StartProcessData */
 /**
-* @brief Function implementing the buttonCheck thread.
+* @brief Function implementing the processingData thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_StartTask02 */
-void StartTask02(void const * argument)
+/* USER CODE END Header_StartProcessData */
+void StartProcessData(void const * argument)
 {
-  /* USER CODE BEGIN StartTask02 */
+  /* USER CODE BEGIN StartProcessData */
   /* Infinite loop */
   for(;;)
   {
-    osDelay(400);
+    osDelay(200);
+    BSP_ACCELERO_AccGetXYZ(raw_acceleration);
+     // Apply Kalman filter to each axis
+    filtered_acceleration[0] = kalman_filter_CMSIS(&kalman_x, (float32_t)raw_acceleration[0]);
+    filtered_acceleration[1] = kalman_filter_CMSIS(&kalman_y, (float32_t)raw_acceleration[1]);
+    filtered_acceleration[2] = kalman_filter_CMSIS(&kalman_z, (float32_t)raw_acceleration[2]);
+    x_position = tilt_detection(filtered_acceleration, x_position);
   }
-  /* USER CODE END StartTask02 */
+  /* USER CODE END StartProcessData */
 }
 
-/* USER CODE BEGIN Header_StartTask03 */
+/* USER CODE BEGIN Header_startReadSensor */
 /**
-* @brief Function implementing the printUART thread.
+* @brief Function implementing the readSensor thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_StartTask03 */
-void StartTask03(void const * argument)
+/* USER CODE END Header_startReadSensor */
+void startReadSensor(void const * argument)
 {
-  /* USER CODE BEGIN StartTask03 */
+  /* USER CODE BEGIN startReadSensor */
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1000);
+    osDelay(100);
   }
-  /* USER CODE END StartTask03 */
+  /* USER CODE END startReadSensor */
 }
 
 /**
