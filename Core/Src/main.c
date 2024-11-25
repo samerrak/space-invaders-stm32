@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include "util.h"
 #include "kalman.h"
+#include "ui.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,9 +49,8 @@ I2C_HandleTypeDef hi2c2;
 
 UART_HandleTypeDef huart1;
 
-osThreadId defaultTaskHandle;
+osThreadId writeUIHandle;
 osThreadId processingDataHandle;
-osThreadId readSensorHandle;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -60,9 +60,8 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_USART1_UART_Init(void);
-void StartDefaultTask(void const * argument);
+void StartWriteUI(void const * argument);
 void StartProcessData(void const * argument);
-void startReadSensor(void const * argument);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -73,7 +72,7 @@ void startReadSensor(void const * argument);
 
 /* Constants */
 #define ACCEL_THRESHOLD 10.0f  // Threshold for tilt detection
-#define X_MAP_SIZE 80
+#define X_MAP_SIZE 10
 
 /* Tilting detection */
 int16_t x_position = X_MAP_SIZE/2;
@@ -87,6 +86,17 @@ kalman_state kalman_z = {0.07f, 2.0f, 0.0f, 1.0f, 0.0f};
 int16_t raw_acceleration[3];    // Raw accelerometer data
 int16_t filtered_acceleration[3];  // Filtered accelerometer data (using Kalman filter)
 
+// UI
+char display[10][40] = {0};
+char ui_string[431] = {0};
+uint8_t player_position_row = 0;
+uint8_t player_position_col = 0;
+
+// Timestamp
+int timestamp = 0;
+
+// Gameplay
+uint8_t gameOver = 0;
 /* USER CODE END 0 */
 
 /**
@@ -141,17 +151,13 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityLow, 0, 256);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+  /* definition and creation of writeUI */
+  osThreadDef(writeUI, StartWriteUI, osPriorityAboveNormal, 0, 128);
+  writeUIHandle = osThreadCreate(osThread(writeUI), NULL);
 
   /* definition and creation of processingData */
-  osThreadDef(processingData, StartProcessData, osPriorityNormal, 0, 256);
+  osThreadDef(processingData, StartProcessData, osPriorityNormal, 0, 512);
   processingDataHandle = osThreadCreate(osThread(processingData), NULL);
-
-  /* definition and creation of readSensor */
-  osThreadDef(readSensor, startReadSensor, osPriorityHigh, 0, 256);
-  readSensorHandle = osThreadCreate(osThread(readSensor), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -287,7 +293,7 @@ static void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
+  huart1.Init.BaudRate = 1843200;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
@@ -371,23 +377,37 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 
 /* USER CODE END 4 */
 
-/* USER CODE BEGIN Header_StartDefaultTask */
+/* USER CODE BEGIN Header_StartWriteUI */
 /**
-  * @brief  Function implementing the readSensor thread.
-  * @param  argument: Not used
-  * @retval None
-  */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void const * argument)
+* @brief Function implementing the writeUI thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartWriteUI */
+void StartWriteUI(void const * argument)
 {
   /* USER CODE BEGIN 5 */
-  /* Infinite loop */
-  for(;;)
-  {
-	osDelay(300);
-    printOne("X position: %d\r\n", x_position);
+	reset_display();
+	start_wave();
+	/* Infinite loop */
+	for(;;)
+	{
+		osDelay(250);
+		if (!gameOver) {
+			uint8_t moveBullets = 0;
+			uint8_t moveAliens = 0;
 
-  }
+			moveBullets = 1;
+
+			if (timestamp % 5 == 0) {
+				moveAliens = 1;
+			}
+
+			gameOver = compute_new_UI_frame(moveBullets, moveAliens);
+			timestamp++;
+			if (gameOver) HAL_UART_Transmit(&huart1, (uint8_t*)"GAME OVER :( ", 14, 100);
+		}
+	}
   /* USER CODE END 5 */
 }
 
@@ -404,7 +424,7 @@ void StartProcessData(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(200);
+    osDelay(500);
     BSP_ACCELERO_AccGetXYZ(raw_acceleration);
      // Apply Kalman filter to each axis
     filtered_acceleration[0] = kalman_filter_CMSIS(&kalman_x, (float32_t)raw_acceleration[0]);
@@ -413,24 +433,6 @@ void StartProcessData(void const * argument)
     x_position = tilt_detection(filtered_acceleration, x_position);
   }
   /* USER CODE END StartProcessData */
-}
-
-/* USER CODE BEGIN Header_startReadSensor */
-/**
-* @brief Function implementing the readSensor thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_startReadSensor */
-void startReadSensor(void const * argument)
-{
-  /* USER CODE BEGIN startReadSensor */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(100);
-  }
-  /* USER CODE END startReadSensor */
 }
 
 /**

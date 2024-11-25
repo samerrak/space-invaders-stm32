@@ -1,0 +1,4 @@
+../Core/Src/ui.c:16:5:idx_to_pos	16	static
+../Core/Src/ui.c:22:5:compute_new_UI_frame	64	static
+../Core/Src/ui.c:75:6:start_wave	16	static
+../Core/Src/ui.c:82:6:reset_display	16	static

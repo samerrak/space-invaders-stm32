@@ -1,0 +1,66 @@
+Configuration	space-invaders
+STM32CubeMX 	6.12.1
+Date	11/25/2024
+MCU	STM32L4S5VITx
+
+
+
+PERIPHERALS	MODES	FUNCTIONS	PINS
+I2C2	I2C	I2C2_SCL	PB10
+I2C2	I2C	I2C2_SDA	PB11
+SYS	TIM6	SYS_VS_tim6	VP_SYS_VS_tim6
+USART1	Asynchronous	USART1_RX	PB7
+USART1	Asynchronous	USART1_TX	PB6
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+7	PC13	GPIO_EXTI13	myButton
+47	PB10	I2C2_SCL	
+48	PB11	I2C2_SDA	
+53	PB14	GPIO_Output	myLed1
+92	PB6	USART1_TX	
+93	PB7	USART1_RX	
+PERIPHERALS	MODES	FUNCTIONS	PINS
+I2C2	I2C	I2C2_SCL	PB10
+I2C2	I2C	I2C2_SDA	PB11
+SYS	TIM6	SYS_VS_tim6	VP_SYS_VS_tim6
+USART1	Asynchronous	USART1_RX	PB7
+USART1	Asynchronous	USART1_TX	PB6
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+7	PC13	GPIO_EXTI13	myButton
+47	PB10	I2C2_SCL	
+48	PB11	I2C2_SDA	
+53	PB14	GPIO_Output	myLed1
+92	PB6	USART1_TX	
+93	PB7	USART1_RX	
+
+
+
+SOFTWARE PROJECT
+
+Project Settings : 
+Project Name : space-invaders
+Project Folder : C:\Users\rokob\Desktop\space-invaders-stm32
+Toolchain / IDE : STM32CubeIDE
+Firmware Package Name and Version : STM32Cube FW_L4 V1.18.1
+
+
+Code Generation Settings : 
+STM32Cube MCU packages and embedded software packs : Copy only the necessary library files
+Generate peripheral initialization as a pair of '.c/.h' files per peripheral : No
+Backup previously generated files when re-generating : No
+Delete previously generated files when not re-generated : Yes
+Set all free pins as analog (to optimize the power consumption) : No
+
+
+Toolchains Settings : 
+Compiler Optimizations : 
+
+
+
+
+
