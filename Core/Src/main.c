@@ -92,6 +92,8 @@ char ui_string[431] = {0};
 uint8_t player_position_row = 0;
 uint8_t player_position_col = 0;
 
+// Bullet
+int fireBullet = 0;
 // Timestamp
 int timestamp = 0;
 
@@ -389,6 +391,7 @@ void StartWriteUI(void const * argument)
   /* USER CODE BEGIN 5 */
 	reset_display();
 	start_wave();
+	display[0][1] = '-';
 	/* Infinite loop */
 	for(;;)
 	{
@@ -402,7 +405,7 @@ void StartWriteUI(void const * argument)
 			if (timestamp % 5 == 0) {
 				moveAliens = 1;
 			}
-
+			HAL_UART_Transmit(&huart1, (uint8_t*)"\033[2J", strlen("\033[2J"), 100);
 			gameOver = compute_new_UI_frame(moveBullets, moveAliens);
 			timestamp++;
 			if (gameOver) HAL_UART_Transmit(&huart1, (uint8_t*)"GAME OVER :( ", 14, 100);
