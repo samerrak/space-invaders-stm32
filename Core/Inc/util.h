@@ -9,6 +9,7 @@
 #define X_MAP_SIZE 80
 
 
+
 // Function declarations
 float calculate_pitch(int16_t *accel_data);
 int16_t tilt_detection(int16_t *filtered_acceleration, int16_t x_position);

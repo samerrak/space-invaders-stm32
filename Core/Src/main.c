@@ -99,6 +99,11 @@ int timestamp = 0;
 
 // Gameplay
 uint8_t gameOver = 0;
+
+// Pressure detector
+float pressure = 0.0;
+int buttonPressed = 0;
+
 /* USER CODE END 0 */
 
 /**
@@ -134,6 +139,7 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   BSP_ACCELERO_Init();  // Initialize the accelerometer
+  BSP_BSP_PSENSOR_Init(); // Initialize the pressure sensor
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -158,7 +164,7 @@ int main(void)
   writeUIHandle = osThreadCreate(osThread(writeUI), NULL);
 
   /* definition and creation of processingData */
-  osThreadDef(processingData, StartProcessData, osPriorityNormal, 0, 512);
+  osThreadDef(processingData, StartProcessData, osPriorityNormal, 0, 256);
   processingDataHandle = osThreadCreate(osThread(processingData), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -368,6 +374,16 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin) {
+	if (GPIO_Pin == myButton_Pin) {
+		if (main_menu == 1)
+			buttonPressed = buttonPressed++;
+		else
+			mode = ((mode+1) % 4);
+	}
+}
+
+
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
     // Report stack overflow
@@ -428,13 +444,42 @@ void StartProcessData(void const * argument)
   for(;;)
   {
     osDelay(500);
-    BSP_ACCELERO_AccGetXYZ(raw_acceleration);
-     // Apply Kalman filter to each axis
-    filtered_acceleration[0] = kalman_filter_CMSIS(&kalman_x, (float32_t)raw_acceleration[0]);
-    filtered_acceleration[1] = kalman_filter_CMSIS(&kalman_y, (float32_t)raw_acceleration[1]);
-    filtered_acceleration[2] = kalman_filter_CMSIS(&kalman_z, (float32_t)raw_acceleration[2]);
-    x_position = tilt_detection(filtered_acceleration, x_position);
-  }
+
+
+    if (main_menu == 1) {
+    	while (1) {
+			BSP_PSENSOR_ReadPressure(pressure);
+			if (pressure > 1020) {
+				HAL_UART_Transmit(&huart1, (uint8_t*)"\033[2J", strlen("\033[2J"), 100);
+				HAL_UART_Transmit(&huart1, (uint8_t*)"Selected Map ", 14, 100);
+				char* buffer = (char*)malloc(512 * sizeof(char));
+				    if (buffer == NULL) {
+				        // Handle allocation failure
+				        return;
+				    }
+				// Clear buffer
+				memset(buffer, 0, 512);
+				// Add header
+				strcpy(buffer, "You have selected the map:");
+
+				// Add map names
+				strcat(buffer, map_names[buttonPressed%NUM_MAPS]);
+				// Transmit
+				HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), 500);
+				free(buffer);
+
+			}
+    	}
+    }
+
+	BSP_ACCELERO_AccGetXYZ(raw_acceleration);
+	 // Apply Kalman filter to each axis
+	filtered_acceleration[0] = kalman_filter_CMSIS(&kalman_x, (float32_t)raw_acceleration[0]);
+	filtered_acceleration[1] = kalman_filter_CMSIS(&kalman_y, (float32_t)raw_acceleration[1]);
+	filtered_acceleration[2] = kalman_filter_CMSIS(&kalman_z, (float32_t)raw_acceleration[2]);
+	x_position = tilt_detection(filtered_acceleration, x_position);
+   }
+
   /* USER CODE END StartProcessData */
 }
 

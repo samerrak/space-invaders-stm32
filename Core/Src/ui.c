@@ -6,17 +6,68 @@
  */
 
 #include "ui.h"
+#include "util.h"
 
 extern UART_HandleTypeDef huart1; // Ensure this is declared
 extern char display[10][40];
 extern char ui_string[431];
 extern int16_t x_position;
 
+// Track current selection
+static int current_selection = 0;
+
+// Map names array
+extern const char* map_names[NUM_MAPS] = {
+    "Zelko's Dungeon",
+    "Zilander",
+    "Zoolander",
+	"Zoolander 2",
+	"Zoo york"
+};
+
 // HELPERS
 int idx_to_pos(int i, int j) {
 	return i*42 + j + 11;
 }
 
+// MAIN MENU {
+void print_main_menu() {
+	// Dynamically allocate buffer
+    char* buffer = (char*)malloc(512 * sizeof(char));
+    if (buffer == NULL) {
+        // Handle allocation failure
+        return;
+    }
+
+    // Clear buffer
+    memset(buffer, 0, 512);
+
+    // Add header
+    strcpy(buffer, "\n\n\n\n\n\n\n\n\n\n\r\n"
+        "Welcome to Space Invaders! Press the button to checkout our map selection\r\n");
+
+    // Add map names
+    strcat(buffer, "Available Maps:\r\n");
+    for(int i = 0; i < NUM_MAPS; i++) {
+        strcat(buffer, map_names[i]);
+        strcat(buffer, "\r\n");
+    }
+
+    // Transmit
+    HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), 100);
+
+    // Free allocated memory
+    free(buffer);
+
+	while(1) {
+		// Wait for pressure press
+		// if (button_pressed()) {
+		// 	// Increment selection
+		// 	current_selection = (current_selection + 1) % NUM_MAPS;
+		// 	break;
+		// }
+	}
+}
 
 // PUBLIC
 int compute_new_UI_frame(int moveBullets, int moveAliens) {

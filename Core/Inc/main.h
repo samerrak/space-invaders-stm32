@@ -71,6 +71,7 @@ void Error_Handler(void);
 #define myLed1_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
+#define NUM_MAPS 5
 
 /* USER CODE END Private defines */
 
