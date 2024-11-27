@@ -6,7 +6,6 @@
 
 // Constants
 #define ACCEL_THRESHOLD 10.0f  // Threshold for tilt detection
-#define X_MAP_SIZE 80
 
 
 // Function declarations
