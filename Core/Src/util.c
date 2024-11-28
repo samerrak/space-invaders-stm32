@@ -36,13 +36,14 @@ int16_t tilt_detection(int16_t *filtered_acceleration, int16_t x_position) {
 }
 
 /* Print a variable number of arguments */
-void printOne(char* string, float data) {
-    char output[120];
-    sprintf(output, string, (int)data);
-    uint16_t len = strlen(output);
-    HAL_UART_Transmit(&huart1, (uint8_t *)output, len, 120);
+void printOne(char* string, ...) {
+	char output[120];
+	va_list args;
+	va_start(args, string);
+	vsnprintf(output, sizeof(output), string, args);
+	uint16_t len = strlen(output);
+	HAL_UART_Transmit(&huart1, (uint8_t *)output, len, 120);
 }
-
 
 
 

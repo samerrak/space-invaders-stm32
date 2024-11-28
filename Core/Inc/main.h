@@ -31,6 +31,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
 #include "stm32l4xx_hal.h"
 #include "stm32l4s5i_iot01_accelero.h"
 #include "stm32l4s5i_iot01_tsensor.h"
@@ -71,6 +72,7 @@ void Error_Handler(void);
 #define myLed1_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
+#define NUM_MAPS 5
 
 /* USER CODE END Private defines */
 
