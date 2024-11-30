@@ -9,7 +9,7 @@
 // Constants
 #define ACCEL_THRESHOLD 10.0f  // Threshold for tilt detection
 #define NUM_MAPS 5
-
+#define X_MAP_SIZE 10
 
 // Function declarations
 float calculate_pitch(int16_t *accel_data);
