@@ -16,5 +16,6 @@
 void reset_display();
 int compute_new_UI_frame(int moveBullets, int moveAliens);
 void start_wave();
+void print_main_menu();
 
 #endif /* INC_UI_H_ */
