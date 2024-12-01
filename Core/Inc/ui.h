@@ -13,7 +13,6 @@
 #include <stdio.h>
 #include "main.h"
 
-void reset_display();
 int compute_new_UI_frame(int moveBullets, int moveAliens);
 void start_wave();
 

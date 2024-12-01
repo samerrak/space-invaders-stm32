@@ -72,7 +72,7 @@ void StartProcessData(void const * argument);
 
 /* Constants */
 #define ACCEL_THRESHOLD 10.0f  // Threshold for tilt detection
-#define X_MAP_SIZE 10
+#define X_MAP_SIZE 60
 
 /* Tilting detection */
 int16_t x_position = X_MAP_SIZE/2;
@@ -87,10 +87,14 @@ int16_t raw_acceleration[3];    // Raw accelerometer data
 int16_t filtered_acceleration[3];  // Filtered accelerometer data (using Kalman filter)
 
 // UI
-char display[10][40] = {0};
-char ui_string[431] = {0};
-uint8_t player_position_row = 0;
-uint8_t player_position_col = 0;
+struct Position {
+	int8_t row;
+	int8_t col;
+};
+char display[25][60] = {0};
+char ui_string[1760] = {0};
+struct Position alien_positions[70] = {0};
+struct Position bullet_positions[300] = {0};
 
 // Bullet
 int fireBullet = 0;
@@ -389,13 +393,11 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 void StartWriteUI(void const * argument)
 {
   /* USER CODE BEGIN 5 */
-	reset_display();
 	start_wave();
-	display[0][1] = '-';
 	/* Infinite loop */
 	for(;;)
 	{
-		osDelay(250);
+		osDelay(100);
 		if (!gameOver) {
 			uint8_t moveBullets = 0;
 			uint8_t moveAliens = 0;
@@ -429,7 +431,7 @@ void StartProcessData(void const * argument)
   {
     osDelay(500);
     BSP_ACCELERO_AccGetXYZ(raw_acceleration);
-     // Apply Kalman filter to each axis
+    // Apply Kalman filter to each axis
     filtered_acceleration[0] = kalman_filter_CMSIS(&kalman_x, (float32_t)raw_acceleration[0]);
     filtered_acceleration[1] = kalman_filter_CMSIS(&kalman_y, (float32_t)raw_acceleration[1]);
     filtered_acceleration[2] = kalman_filter_CMSIS(&kalman_z, (float32_t)raw_acceleration[2]);
