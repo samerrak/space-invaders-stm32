@@ -197,3 +197,14 @@ void reset_canvas() {
 			"##############################################################"
 );
 }
+
+
+void shoot() {
+	for (int i = 0; i < 300; i++) {
+		if (bullet[i].row == -1) {
+			bullet[i].row = 2;
+			bullet[i].col = x_position;
+			break;
+		}
+	}
+}
