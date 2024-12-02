@@ -1,6 +1,6 @@
 /* Constants */
 #define ACCEL_THRESHOLD 10.0f  // Threshold for tilt detection
-#define X_MAP_SIZE 10
+#define X_MAP_SIZE 60
 
 #include "util.h"
 
