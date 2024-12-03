@@ -72,7 +72,7 @@ void StartProcessData(void const * argument);
 
 /* Constants */
 #define ACCEL_THRESHOLD 10.0f  // Threshold for tilt detection
-#define X_MAP_SIZE 60
+#define X_MAP_SIZE 40
 
 const char* map_names[NUM_MAPS] = {
     "Zelko's Dungeon",
@@ -85,7 +85,7 @@ const char* map_names[NUM_MAPS] = {
 
 
 /* Tilting detection */
-int16_t x_position = X_MAP_SIZE/2;
+int16_t x_position = X_MAP_SIZE/2 ;
 
 /* Kalman Filter States */
 kalman_state kalman_x = {0.07f, 2.0f, 0.0f, 1.0f, 0.0f};
@@ -315,7 +315,7 @@ static void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 1843200;
+  huart1.Init.BaudRate = 921600;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
@@ -393,6 +393,8 @@ void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin) {
 		if (main_menu == 1)
 			buttonPressed = buttonPressed++;
 	}
+
+	if (main_menu != 1) shoot();
 }
 
 
@@ -421,7 +423,7 @@ void StartDefaultTask(void const * argument)
 	/* Infinite loop */
 	for(;;)
 	{
-		osDelay(250);
+		osDelay(100);
 
 		if (main_menu == 1)
 		{
@@ -461,11 +463,9 @@ void StartDefaultTask(void const * argument)
 			uint8_t moveBullets = 0;
 			uint8_t moveAliens = 0;
 
-			moveBullets = 1;
+			if (timestamp % 2 == 0) moveBullets = 1;
 
-			if (timestamp % 5 == 0) {
-				moveAliens = 1;
-			}
+			if (timestamp % 12 == 0) moveAliens = 1;
 			HAL_UART_Transmit(&huart1, (uint8_t*)"\033[H", strlen("\033[H"), 100);
 			// HAL_UART_Transmit(&huart1, (uint8_t*)"\033[2K", strlen("\033[2K"), 100);
 			if (!gameOver) {
@@ -493,7 +493,7 @@ void StartProcessData(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(300);
+    osDelay(150);
     if (main_menu != 1)
 	{
     	BSP_ACCELERO_AccGetXYZ(raw_acceleration);

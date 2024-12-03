@@ -148,9 +148,9 @@ void update_canvas() {
 	}
 //
 //	// Draw player
-	ui_string[idx_to_pos(23, x_position-1)] = '/';
-	ui_string[idx_to_pos(23, x_position)] = '|';
-	ui_string[idx_to_pos(23, x_position+1)] = '\\';
+	ui_string[idx_to_pos(23, x_position)] = '/';
+	ui_string[idx_to_pos(23, x_position+1)] = '|';
+	ui_string[idx_to_pos(23, x_position+2)] = '\\';
 //
 //	// Draw aliens
 	draw_aliens();
@@ -256,8 +256,8 @@ void reset_canvas() {
 void shoot() {
 	for (int i = 0; i < 300; i++) {
 		if (bullet_positions[i].row == -1) {
-			bullet_positions[i].row = 2;
-			bullet_positions[i].col = x_position;
+			bullet_positions[i].row = 23;
+			bullet_positions[i].col = x_position+1;
 			break;
 		}
 	}

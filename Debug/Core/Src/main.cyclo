@@ -3,9 +3,9 @@
 ../Core/Src/main.c:259:13:MX_I2C2_Init	4
 ../Core/Src/main.c:307:13:MX_USART1_UART_Init	5
 ../Core/Src/main.c:355:13:MX_GPIO_Init	1
-../Core/Src/main.c:391:6:HAL_GPIO_EXTI_Callback	3
-../Core/Src/main.c:400:6:vApplicationStackOverflowHook	1
-../Core/Src/main.c:418:6:StartDefaultTask	9
+../Core/Src/main.c:391:6:HAL_GPIO_EXTI_Callback	4
+../Core/Src/main.c:402:6:vApplicationStackOverflowHook	1
+../Core/Src/main.c:420:6:StartDefaultTask	10
 ../Core/Src/main.c:490:6:StartProcessData	2
 ../Core/Src/main.c:521:6:HAL_TIM_PeriodElapsedCallback	2
 ../Core/Src/main.c:538:6:Error_Handler	1
