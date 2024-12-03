@@ -1,3 +1,4 @@
+
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -72,7 +73,7 @@ void StartProcessData(void const * argument);
 
 /* Constants */
 #define ACCEL_THRESHOLD 10.0f  // Threshold for tilt detection
-#define X_MAP_SIZE 10
+#define X_MAP_SIZE 60
 
 const char* map_names[NUM_MAPS] = {
     "Zelko's Dungeon",
@@ -97,10 +98,15 @@ int16_t raw_acceleration[3];    // Raw accelerometer data
 int16_t filtered_acceleration[3];  // Filtered accelerometer data (using Kalman filter)
 
 // UI
-char display[10][40] = {0};
-char ui_string[431] = {0};
-uint8_t player_position_row = 0;
-uint8_t player_position_col = 0;
+struct Position {
+	int8_t row;
+	int8_t col;
+};
+char display[25][60] = {0};
+char ui_string[1760] = {0};
+
+struct Position alien_positions[70] = {0};
+struct Position bullet_positions[300] = {0};
 
 // Bullet
 int fireBullet = 0;
@@ -322,7 +328,7 @@ static void MX_USART1_UART_Init(void)
   huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart1.Init.OverSampling = UART_OVERSAMPLING_16;
   huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+  huart1.Init.ClockPrescaler = UART_PRESCALER_DIV4;
   huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
   if (HAL_UART_Init(&huart1) != HAL_OK)
   {
@@ -452,27 +458,26 @@ void StartDefaultTask(void const * argument)
 				HAL_UART_Transmit(&huart1, (uint8_t*)"\033[2J", strlen("\033[2J"), 100);
 				reset_display();
 				start_wave();
-				display[0][1] = '-';
 
 				}
 		}
 
 		if (main_menu != 1) {
-			if (!gameOver) {
-				uint8_t moveBullets = 0;
-				uint8_t moveAliens = 0;
+			uint8_t moveBullets = 0;
+			uint8_t moveAliens = 0;
 
-				moveBullets = 1;
+			moveBullets = 1;
 
-				if (timestamp % 5 == 0) {
-					moveAliens = 1;
-				}
-				HAL_UART_Transmit(&huart1, (uint8_t*)"\033[2J", strlen("\033[2J"), 100);
-				gameOver = compute_new_UI_frame(moveBullets, moveAliens);
-				timestamp++;
-				if (gameOver) HAL_UART_Transmit(&huart1, (uint8_t*)"GAME OVER :( ", 14, 100);
-
-		}
+			if (timestamp % 5 == 0) {
+				moveAliens = 1;
+			}
+			HAL_UART_Transmit(&huart1, (uint8_t*)"\033[H", strlen("\033[H"), 100);
+			// HAL_UART_Transmit(&huart1, (uint8_t*)"\033[2K", strlen("\033[2K"), 100);
+			gameOver = compute_new_UI_frame(moveBullets, moveAliens);
+			timestamp++;
+			if (gameOver) {
+				HAL_UART_Transmit(&huart1, (uint8_t*)"GAME OVER :( ", 14, 100);
+			}
 	}
 
 	}
