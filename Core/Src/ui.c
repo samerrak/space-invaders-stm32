@@ -43,6 +43,7 @@ int idx_to_pos(int row, int col) {
 
 // MAIN MENU {
 void print_main_menu() {
+	HAL_UART_Transmit(&huart1, (uint8_t*)"\x1B[2J\r", strlen("\x1B[2J\r"), 100);
 	// Dynamically allocate buffer
     char* buffer = (char*)malloc(512 * sizeof(char));
     if (buffer == NULL) {
@@ -96,10 +97,11 @@ int compute_new_UI_frame(int moveBullets, int moveAliens) {
 	// Loop for aliens
 	if (moveAliens){
 		for (int i = 0; i < 70; i++) {
-			if (alien_positions[i].row > 0 && alien_positions[i].row < 24) {
-				alien_positions[i].row++;
-				if (alien_positions[i].row == 58){
+			if (alien_positions[i].row > 0 && alien_positions[i].row < 23) {
+				if (alien_positions[i].row == 22){
 					gameOver = 1;
+				} else {
+					alien_positions[i].row++;
 				}
 			} else {
 				alien_positions[i].row = -1;
@@ -219,7 +221,7 @@ void handle_collision(row, col) {
 
 void reset_canvas() {
 	// 69 (5 + 62 + 2) bytes
-	strcpy(ui_string, "\033[H\r"
+	strcpy(ui_string, "\033[H \r"
 			"##############################################################\n\r"
 			"#                                                            #\n\r"
 			"#                                                            #\n\r"

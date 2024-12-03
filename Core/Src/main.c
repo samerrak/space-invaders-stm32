@@ -178,7 +178,7 @@ int main(void)
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of processingData */
-  osThreadDef(processingData, StartProcessData, osPriorityNormal, 0, 256);
+  osThreadDef(processingData, StartProcessData, osPriorityNormal, 0, 512);
   processingDataHandle = osThreadCreate(osThread(processingData), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -442,7 +442,7 @@ void StartDefaultTask(void const * argument)
 				// Clear buffer
 				memset(buffer, 0, 512);
 				// Add header
-				strcpy(buffer, "You have selected the map:");
+				strcpy(buffer, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nYou have selected the map:");
 
 				// Add map names
 				strcat(buffer, map_names[buttonPressed%NUM_MAPS]);
@@ -468,9 +468,10 @@ void StartDefaultTask(void const * argument)
 			}
 			HAL_UART_Transmit(&huart1, (uint8_t*)"\033[H", strlen("\033[H"), 100);
 			// HAL_UART_Transmit(&huart1, (uint8_t*)"\033[2K", strlen("\033[2K"), 100);
-			gameOver = compute_new_UI_frame(moveBullets, moveAliens);
-			timestamp++;
-			if (gameOver) {
+			if (!gameOver) {
+				gameOver = compute_new_UI_frame(moveBullets, moveAliens);
+				timestamp++;
+			} else {
 				HAL_UART_Transmit(&huart1, (uint8_t*)"GAME OVER :( ", 14, 100);
 			}
 	}

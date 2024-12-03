@@ -1,0 +1,9 @@
+../Core/Src/ui.c:40:5:idx_to_pos	1
+../Core/Src/ui.c:45:6:print_main_menu	4
+../Core/Src/ui.c:82:5:compute_new_UI_frame	10
+../Core/Src/ui.c:123:6:start_wave	4
+../Core/Src/ui.c:140:6:update_canvas	3
+../Core/Src/ui.c:160:6:draw_aliens	10
+../Core/Src/ui.c:213:6:handle_collision	4
+../Core/Src/ui.c:222:6:reset_canvas	1
+../Core/Src/ui.c:256:6:shoot	3
