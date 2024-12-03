@@ -100,6 +100,7 @@ char display[25][60] = {0};
 char ui_string[1760] = {0};
 
 struct Position alien_positions[70] = {0};
+int aliens_remaining = 20;
 struct Position bullet_positions[300] = {0};
 
 // Bullet
@@ -471,7 +472,11 @@ void StartDefaultTask(void const * argument)
 				gameOver = compute_new_UI_frame(moveBullets, moveAliens);
 				timestamp++;
 			} else {
-				print_game_over();
+				if(aliens_remaining <= 1){
+					print_win();
+				} else {
+					print_game_over();
+				}
 			}
 	}
 

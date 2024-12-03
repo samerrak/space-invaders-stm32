@@ -18,4 +18,5 @@ void start_wave();
 void shoot();
 void print_main_menu();
 void print_game_over();
+void print_win();
 #endif /* INC_UI_H_ */
