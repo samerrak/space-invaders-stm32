@@ -72,7 +72,6 @@ void StartProcessData(void const * argument);
 
 /* Constants */
 #define ACCEL_THRESHOLD 10.0f  // Threshold for tilt detection
-#define X_MAP_SIZE 40
 
 const char* map_names[NUM_MAPS] = {
     "Zelko's Dungeon",
@@ -472,7 +471,7 @@ void StartDefaultTask(void const * argument)
 				gameOver = compute_new_UI_frame(moveBullets, moveAliens);
 				timestamp++;
 			} else {
-				HAL_UART_Transmit(&huart1, (uint8_t*)"GAME OVER :( ", 14, 100);
+				print_game_over();
 			}
 	}
 

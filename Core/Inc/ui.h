@@ -17,4 +17,5 @@ int compute_new_UI_frame(int moveBullets, int moveAliens);
 void start_wave();
 void shoot();
 void print_main_menu();
+void print_game_over();
 #endif /* INC_UI_H_ */
