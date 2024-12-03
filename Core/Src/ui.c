@@ -12,10 +12,7 @@ extern char display[25][60];
 extern char ui_string[1760];
 extern struct Position alien_positions[70];
 extern struct Position bullet_positions[300];
-extern struct Position {
-	int8_t row;
-	int8_t col;
-};
+
 
 
 extern int16_t x_position;

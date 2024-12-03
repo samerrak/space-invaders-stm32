@@ -97,11 +97,7 @@ kalman_state kalman_z = {0.07f, 2.0f, 0.0f, 1.0f, 0.0f};
 int16_t raw_acceleration[3];    // Raw accelerometer data
 int16_t filtered_acceleration[3];  // Filtered accelerometer data (using Kalman filter)
 
-// UI
-struct Position {
-	int8_t row;
-	int8_t col;
-};
+
 char display[25][60] = {0};
 char ui_string[1760] = {0};
 
@@ -455,8 +451,8 @@ void StartDefaultTask(void const * argument)
 				HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), 500);
 				free(buffer);
 				main_menu = 0;
-				HAL_UART_Transmit(&huart1, (uint8_t*)"\033[2J", strlen("\033[2J"), 100);
-				reset_display();
+				HAL_UART_Transmit(&huart1, (uint8_t*)"\033[2J", strlen("\033[2J"), 500);
+
 				start_wave();
 
 				}
@@ -497,7 +493,7 @@ void StartProcessData(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(500);
+    osDelay(300);
     if (main_menu != 1)
 	{
     	BSP_ACCELERO_AccGetXYZ(raw_acceleration);

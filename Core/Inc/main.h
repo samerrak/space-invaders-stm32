@@ -44,6 +44,10 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+struct Position {
+	int8_t row;
+	int8_t col;
+};
 
 /* USER CODE END ET */
 
