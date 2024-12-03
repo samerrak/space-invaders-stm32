@@ -167,7 +167,7 @@ void handle_collision(row, col) {
 
 void reset_canvas() {
 	// 69 (5 + 62 + 2) bytes
-	strcpy(ui_string, "\x1B[2J\r"
+	strcpy(ui_string, "\033[H\r"
 			"##############################################################\n\r"
 			"#                                                            #\n\r"
 			"#                                                            #\n\r"
@@ -201,9 +201,9 @@ void reset_canvas() {
 
 void shoot() {
 	for (int i = 0; i < 300; i++) {
-		if (bullet[i].row == -1) {
-			bullet[i].row = 2;
-			bullet[i].col = x_position;
+		if (bullet_positions[i].row == -1) {
+			bullet_positions[i].row = 2;
+			bullet_positions[i].col = x_position;
 			break;
 		}
 	}

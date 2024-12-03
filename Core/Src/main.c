@@ -307,7 +307,7 @@ static void MX_USART1_UART_Init(void)
   huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart1.Init.OverSampling = UART_OVERSAMPLING_16;
   huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+  huart1.Init.ClockPrescaler = UART_PRESCALER_DIV4;
   huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
   if (HAL_UART_Init(&huart1) != HAL_OK)
   {
@@ -397,7 +397,7 @@ void StartWriteUI(void const * argument)
 	/* Infinite loop */
 	for(;;)
 	{
-		osDelay(100);
+		osDelay(150);
 		if (!gameOver) {
 			uint8_t moveBullets = 0;
 			uint8_t moveAliens = 0;
@@ -407,10 +407,13 @@ void StartWriteUI(void const * argument)
 			if (timestamp % 5 == 0) {
 				moveAliens = 1;
 			}
-			HAL_UART_Transmit(&huart1, (uint8_t*)"\033[2J", strlen("\033[2J"), 100);
+			HAL_UART_Transmit(&huart1, (uint8_t*)"\033[H", strlen("\033[H"), 100);
+			// HAL_UART_Transmit(&huart1, (uint8_t*)"\033[2K", strlen("\033[2K"), 100);
 			gameOver = compute_new_UI_frame(moveBullets, moveAliens);
 			timestamp++;
-			if (gameOver) HAL_UART_Transmit(&huart1, (uint8_t*)"GAME OVER :( ", 14, 100);
+			if (gameOver) {
+				HAL_UART_Transmit(&huart1, (uint8_t*)"GAME OVER :( ", 14, 100);
+			}
 		}
 	}
   /* USER CODE END 5 */
