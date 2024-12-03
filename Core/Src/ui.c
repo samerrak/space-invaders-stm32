@@ -2,21 +2,41 @@
  * ui.c
  *
  *  Created on: Nov 24, 2024
- *      Author: Roko, Tim, Samer, Ralph
+ *      Author: rokob
  */
 
 #include "ui.h"
-extern struct Position {
-	int8_t row;
-	int8_t col;
-};
+
 extern UART_HandleTypeDef huart1; // Ensure this is declared
 extern char display[25][60];
 extern char ui_string[1760];
 extern struct Position alien_positions[70];
 extern struct Position bullet_positions[300];
+extern struct Position {
+	int8_t row;
+	int8_t col;
+};
+
 
 extern int16_t x_position;
+
+
+// Track current selection
+static int current_selection = 0;
+
+// Map names array
+extern const char* map_names[NUM_MAPS];
+
+char art[10][69] = {
+        "                           _                    _               ",
+        "                          (_)                  | |              ",
+        " ___ _ __   __ _  ___ ___ _ _ ____   ____ _  __| | ___ _ __ ___ ",
+        "/ __| '_ \\ / _` |/ __/ _ \\ | '_ \\ \\ / / _` |/ _` |/ _ \\ '__/ __|",
+        "\\__ \\ |_) | (_| | (_|  __/ | | | \\ V / (_| | (_| |  __/ |  \\__ \\",
+        "|___/ .__/ \\__,_|\\___\\___|_|_| |_|\\_/ \\__,_|\\__,_|\\___|_|  |___/",
+        "    | |                                                         ",
+        "    |_|                                                         ",
+    };
 
 
 // HELPERS
@@ -24,6 +44,41 @@ int idx_to_pos(int row, int col) {
 	return 69 + row*64 + col + 1;
 }
 
+// MAIN MENU {
+void print_main_menu() {
+	// Dynamically allocate buffer
+    char* buffer = (char*)malloc(512 * sizeof(char));
+    if (buffer == NULL) {
+        // Handle allocation failure
+        return;
+    }
+
+    for (int i = 0; i < 8; i++) {
+    	printOne("%s\n\r", art[i]);
+    }
+
+
+
+    // Clear buffer
+    memset(buffer, 0, 256);
+
+    // Add header
+    strcpy(buffer, "\n"
+    		"Available Maps:\r\n");
+
+    // Add map names
+    for(int i = 0; i < NUM_MAPS; i++) {
+        strcat(buffer, map_names[i]);
+        strcat(buffer, "\r\n");
+    }
+
+    // Transmit
+    HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), 100);
+
+    // Free allocated memory
+    free(buffer);
+
+}
 
 // PUBLIC
 int compute_new_UI_frame(int moveBullets, int moveAliens) {

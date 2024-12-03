@@ -1,3 +1,4 @@
+
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -49,7 +50,7 @@ I2C_HandleTypeDef hi2c2;
 
 UART_HandleTypeDef huart1;
 
-osThreadId writeUIHandle;
+osThreadId defaultTaskHandle;
 osThreadId processingDataHandle;
 /* USER CODE BEGIN PV */
 
@@ -60,7 +61,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_USART1_UART_Init(void);
-void StartWriteUI(void const * argument);
+void StartDefaultTask(void const * argument);
 void StartProcessData(void const * argument);
 
 /* USER CODE BEGIN PFP */
@@ -73,6 +74,16 @@ void StartProcessData(void const * argument);
 /* Constants */
 #define ACCEL_THRESHOLD 10.0f  // Threshold for tilt detection
 #define X_MAP_SIZE 60
+
+const char* map_names[NUM_MAPS] = {
+    "Zelko's Dungeon",
+    "Zilander",
+    "Zoolander",
+	"Zoolander 2",
+	"Zoo york"
+};
+
+
 
 /* Tilting detection */
 int16_t x_position = X_MAP_SIZE/2;
@@ -93,6 +104,7 @@ struct Position {
 };
 char display[25][60] = {0};
 char ui_string[1760] = {0};
+
 struct Position alien_positions[70] = {0};
 struct Position bullet_positions[300] = {0};
 
@@ -100,9 +112,17 @@ struct Position bullet_positions[300] = {0};
 int fireBullet = 0;
 // Timestamp
 int timestamp = 0;
+int mode;
 
 // Gameplay
 uint8_t gameOver = 0;
+
+// Main menu
+int buttonPressed = 0;
+int main_menu = 1;
+int printed_menu = 0;
+float init_p = 0.0;
+float pressure = 0.0;
 /* USER CODE END 0 */
 
 /**
@@ -138,6 +158,7 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   BSP_ACCELERO_Init();  // Initialize the accelerometer
+  BSP_PSENSOR_Init();
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -157,9 +178,9 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of writeUI */
-  osThreadDef(writeUI, StartWriteUI, osPriorityAboveNormal, 0, 128);
-  writeUIHandle = osThreadCreate(osThread(writeUI), NULL);
+  /* definition and creation of defaultTask */
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityLow, 0, 256);
+  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of processingData */
   osThreadDef(processingData, StartProcessData, osPriorityNormal, 0, 512);
@@ -372,6 +393,15 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin) {
+	if (GPIO_Pin == myButton_Pin) {
+		if (main_menu == 1)
+			buttonPressed = buttonPressed++;
+	}
+}
+
+
+
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
     // Report stack overflow
@@ -383,22 +413,56 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 
 /* USER CODE END 4 */
 
-/* USER CODE BEGIN Header_StartWriteUI */
+/* USER CODE BEGIN Header_StartDefaultTask */
 /**
-* @brief Function implementing the writeUI thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartWriteUI */
-void StartWriteUI(void const * argument)
+  * @brief  Function implementing the defaultTask thread.
+  * @param  argument: Not used
+  * @retval None
+  */
+/* USER CODE END Header_StartDefaultTask */
+void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN 5 */
-	start_wave();
 	/* Infinite loop */
 	for(;;)
 	{
-		osDelay(150);
-		if (!gameOver) {
+		osDelay(250);
+
+		if (main_menu == 1)
+		{
+
+			if (printed_menu == 0) {
+				printed_menu = 1;
+				print_main_menu();
+				init_p = BSP_PSENSOR_ReadPressure() + 5;
+
+			}
+			pressure = BSP_PSENSOR_ReadPressure();
+			if (pressure > init_p) {
+				char* buffer = (char*)malloc(128 * sizeof(char));
+					if (buffer == NULL) {
+						// Handle allocation failure
+						return;
+					}
+				// Clear buffer
+				memset(buffer, 0, 512);
+				// Add header
+				strcpy(buffer, "You have selected the map:");
+
+				// Add map names
+				strcat(buffer, map_names[buttonPressed%NUM_MAPS]);
+				// Transmit
+				HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), 500);
+				free(buffer);
+				main_menu = 0;
+				HAL_UART_Transmit(&huart1, (uint8_t*)"\033[2J", strlen("\033[2J"), 100);
+				reset_display();
+				start_wave();
+
+				}
+		}
+
+		if (main_menu != 1) {
 			uint8_t moveBullets = 0;
 			uint8_t moveAliens = 0;
 
@@ -414,7 +478,8 @@ void StartWriteUI(void const * argument)
 			if (gameOver) {
 				HAL_UART_Transmit(&huart1, (uint8_t*)"GAME OVER :( ", 14, 100);
 			}
-		}
+	}
+
 	}
   /* USER CODE END 5 */
 }
@@ -433,12 +498,18 @@ void StartProcessData(void const * argument)
   for(;;)
   {
     osDelay(500);
-    BSP_ACCELERO_AccGetXYZ(raw_acceleration);
-    // Apply Kalman filter to each axis
-    filtered_acceleration[0] = kalman_filter_CMSIS(&kalman_x, (float32_t)raw_acceleration[0]);
-    filtered_acceleration[1] = kalman_filter_CMSIS(&kalman_y, (float32_t)raw_acceleration[1]);
-    filtered_acceleration[2] = kalman_filter_CMSIS(&kalman_z, (float32_t)raw_acceleration[2]);
-    x_position = tilt_detection(filtered_acceleration, x_position);
+    if (main_menu != 1)
+	{
+    	BSP_ACCELERO_AccGetXYZ(raw_acceleration);
+		 // Apply Kalman filter to each axis
+		filtered_acceleration[0] = kalman_filter_CMSIS(&kalman_x, (float32_t)raw_acceleration[0]);
+		filtered_acceleration[1] = kalman_filter_CMSIS(&kalman_y, (float32_t)raw_acceleration[1]);
+		filtered_acceleration[2] = kalman_filter_CMSIS(&kalman_z, (float32_t)raw_acceleration[2]);
+		x_position = tilt_detection(filtered_acceleration, x_position);
+	}
+
+
+
   }
   /* USER CODE END StartProcessData */
 }
