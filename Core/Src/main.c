@@ -1,4 +1,3 @@
-
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -179,7 +178,7 @@ int main(void)
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of processingData */
-  osThreadDef(processingData, StartProcessData, osPriorityNormal, 0, 512);
+  osThreadDef(processingData, StartProcessData, osPriorityNormal, 0, 256);
   processingDataHandle = osThreadCreate(osThread(processingData), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
