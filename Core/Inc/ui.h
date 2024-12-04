@@ -12,6 +12,8 @@
 #include "arm_math.h"
 #include <stdio.h>
 #include "main.h"
+#include "util.h"
+
 
 int compute_new_UI_frame(int moveBullets, int moveAliens);
 void start_wave(int side);
