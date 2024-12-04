@@ -100,7 +100,7 @@ char display[25][60] = {0};
 char ui_string[1760] = {0};
 
 struct Position alien_positions[70] = {0};
-int aliens_remaining = 20;
+int aliens_remaining = 0;
 struct Position bullet_positions[300] = {0};
 
 // Bullet
@@ -391,7 +391,7 @@ static void MX_GPIO_Init(void)
 void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin) {
 	if (GPIO_Pin == myButton_Pin) {
 		if (main_menu == 1)
-			buttonPressed = buttonPressed++;
+			buttonPressed++;
 	}
 
 	if (main_menu != 1) shoot();
@@ -453,26 +453,34 @@ void StartDefaultTask(void const * argument)
 				free(buffer);
 				main_menu = 0;
 				HAL_UART_Transmit(&huart1, (uint8_t*)"\033[2J", strlen("\033[2J"), 500);
-
-				start_wave();
-
+				aliens_remaining = ((buttonPressed+1)%NUM_MAPS)*10;
+				for (int i = 0; i < 300; i++) {
+					bullet_positions[i].row = -1;
+					bullet_positions[i].col = -1;
 				}
+			}
 		}
 
 		if (main_menu != 1) {
 			uint8_t moveBullets = 0;
 			uint8_t moveAliens = 0;
 
-			if (timestamp % 2 == 0) moveBullets = 1;
+			if (timestamp % 2 == 0) {
+				moveBullets = 1;
+			}
 
-			if (timestamp % 12 == 0) moveAliens = 1;
+			if (timestamp % 12 == 0) {
+				if (timestamp < ((buttonPressed+1)%NUM_MAPS)*24 && timestamp % 24 == 0) start_wave((timestamp)/24);
+				moveAliens = 1;
+			}
 			HAL_UART_Transmit(&huart1, (uint8_t*)"\033[H", strlen("\033[H"), 100);
 			// HAL_UART_Transmit(&huart1, (uint8_t*)"\033[2K", strlen("\033[2K"), 100);
 			if (!gameOver) {
 				gameOver = compute_new_UI_frame(moveBullets, moveAliens);
 				timestamp++;
 			} else {
-				if(aliens_remaining <= 1){
+
+				if(aliens_remaining == 0){
 					print_win();
 				} else {
 					print_game_over();

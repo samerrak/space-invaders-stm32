@@ -14,7 +14,7 @@
 #include "main.h"
 
 int compute_new_UI_frame(int moveBullets, int moveAliens);
-void start_wave();
+void start_wave(int side);
 void shoot();
 void print_main_menu();
 void print_game_over();

@@ -150,7 +150,7 @@ int compute_new_UI_frame(int moveBullets, int moveAliens) {
 	}
 
 	// Check if user wins
-	if (aliens_remaining <= 1){
+	if (aliens_remaining == 0){
 		gameOver = 1;
 	}
 
@@ -158,7 +158,7 @@ int compute_new_UI_frame(int moveBullets, int moveAliens) {
 	if (moveAliens){
 		for (int i = 0; i < 70; i++) {
 			if (alien_positions[i].row > 0 && alien_positions[i].row < 23) {
-				if ((alien_positions[i].row == 22)||(aliens_remaining <= 1)){
+				if ((alien_positions[i].row == 21)||(aliens_remaining == 0)){
 					gameOver = 1;
 				}else {
 					alien_positions[i].row++;
@@ -180,20 +180,15 @@ int compute_new_UI_frame(int moveBullets, int moveAliens) {
 }
 
 
-void start_wave() {
-	for (int i = 0; i < 70; i++) {
-		if (i < 20){
+void start_wave(int side) {
+	for (int i = side*10; i < 70; i++) {
+		if (i < (side+1)*10){
 			alien_positions[i].row = 1;
-			alien_positions[i].col = 3*i + 1;
+			alien_positions[i].col = 6*(i%10) + (side%2)*3 + 1;
 		} else {
 			alien_positions[i].row = -1;
 			alien_positions[i].col = -1;
 		}
-	}
-
-	for (int i = 0; i < 300; i++) {
-		bullet_positions[i].row = -1;
-		bullet_positions[i].col = -1;
 	}
 }
 

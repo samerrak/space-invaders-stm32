@@ -5,7 +5,7 @@
 ../Core/Src/main.c:355:13:MX_GPIO_Init	1
 ../Core/Src/main.c:391:6:HAL_GPIO_EXTI_Callback	4
 ../Core/Src/main.c:402:6:vApplicationStackOverflowHook	1
-../Core/Src/main.c:420:6:StartDefaultTask	10
-../Core/Src/main.c:490:6:StartProcessData	2
-../Core/Src/main.c:521:6:HAL_TIM_PeriodElapsedCallback	2
-../Core/Src/main.c:538:6:Error_Handler	1
+../Core/Src/main.c:420:6:StartDefaultTask	14
+../Core/Src/main.c:502:6:StartProcessData	2
+../Core/Src/main.c:533:6:HAL_TIM_PeriodElapsedCallback	2
+../Core/Src/main.c:550:6:Error_Handler	1
