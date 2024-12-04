@@ -13,6 +13,7 @@ extern char ui_string[1760];
 extern struct Position alien_positions[70];
 extern struct Position bullet_positions[300];
 extern int aliens_remaining;
+extern int buttonPressed;
 
 
 
@@ -89,36 +90,30 @@ int idx_to_pos(int row, int col) {
 
 // MAIN MENU {
 void print_main_menu() {
-	HAL_UART_Transmit(&huart1, (uint8_t*)"\x1B[2J\r", strlen("\x1B[2J\r"), 100);
-	// Dynamically allocate buffer
-    char* buffer = (char*)malloc(512 * sizeof(char));
-    if (buffer == NULL) {
-        // Handle allocation failure
-        return;
-    }
+    // Clear the screen only once and prepare the UI string
+    strcpy(ui_string, "\x1B[2J\r\033[H");
 
+    // Add ASCII art
     for (int i = 0; i < 18; i++) {
-    	printOne("%s\n\r", art[i]);
+        strcat(ui_string, art[i]);
+        strcat(ui_string, "\n\r");
     }
-    // Clear buffer
-    memset(buffer, 0, 256);
 
     // Add header
-    strcpy(buffer, "\n"
-    		"Available Maps:\r\n");
+    strcat(ui_string, "\nAvailable Maps:\n\r");
 
-    // Add map names
-    for(int i = 0; i < NUM_MAPS; i++) {
-        strcat(buffer, map_names[i]);
-        strcat(buffer, "\r\n");
+    // Add map names with conditional "<" for the current selection
+    for (int i = 0; i < NUM_MAPS; i++) {
+        strcat(ui_string, map_names[i]);
+        if ((buttonPressed % NUM_MAPS)  == i) {
+            strcat(ui_string, " <");
+        }
+        strcat(ui_string, "\n\r");
     }
 
-    // Transmit
-    HAL_UART_Transmit(&huart1, (uint8_t*)buffer, strlen(buffer), 100);
-
-    // Free allocated memory
-    free(buffer);
-
+    // Transmit the final UI string
+    uint16_t len = strlen(ui_string);
+    HAL_UART_Transmit(&huart1, (uint8_t*)ui_string, len, 100);
 }
 
 void print_game_over() {
