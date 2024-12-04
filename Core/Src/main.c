@@ -96,7 +96,7 @@ void StartSoundTask(void const * argument);
 #define ACCEL_THRESHOLD 10.0f  // Threshold for tilt detection
 
 const char* map_names[NUM_MAPS] = {
-    "Zelko's Dungeon",
+    "Zeljko's Dungeon",
     "Zilander",
     "Zoolander",
 	"Zoolander 2",
