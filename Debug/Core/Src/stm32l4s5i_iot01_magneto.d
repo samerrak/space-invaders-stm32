@@ -20,6 +20,11 @@ Core/Src/stm32l4s5i_iot01_magneto.o: \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_dma.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_dma_ex.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_cortex.h \
+ ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_adc.h \
+ ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_ll_adc.h \
+ ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_adc_ex.h \
+ ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_dac.h \
+ ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_dac_ex.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_exti.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_flash.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_flash_ex.h \
@@ -32,8 +37,8 @@ Core/Src/stm32l4s5i_iot01_magneto.o: \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h \
- C:/Users/rokob/Documents/School/ECSE444/space-invaders-stm32/Drivers/Components/../Components/lis3mdl/lis3mdl.h \
- C:/Users/rokob/Documents/School/ECSE444/space-invaders-stm32/Drivers/Components/../Components/lis3mdl/../Common/magneto.h
+ /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lis3mdl/lis3mdl.h \
+ /Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lis3mdl/../Common/magneto.h
 ../Core/Inc/stm32l4s5i_iot01_magneto.h:
 ../Core/Inc/stm32l4s5i_iot01.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:
@@ -55,6 +60,11 @@ Core/Src/stm32l4s5i_iot01_magneto.o: \
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_dma.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_dma_ex.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_cortex.h:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_adc.h:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_ll_adc.h:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_adc_ex.h:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_dac.h:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_dac_ex.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_exti.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_flash.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_flash_ex.h:
@@ -67,5 +77,5 @@ Core/Src/stm32l4s5i_iot01_magneto.o: \
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h:
-C:/Users/rokob/Documents/School/ECSE444/space-invaders-stm32/Drivers/Components/../Components/lis3mdl/lis3mdl.h:
-C:/Users/rokob/Documents/School/ECSE444/space-invaders-stm32/Drivers/Components/../Components/lis3mdl/../Common/magneto.h:
+/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lis3mdl/lis3mdl.h:
+/Users/samerabdulkarim/STM32CubeIDE/workspace_1.16.0/space-invaders/Drivers/Components/../Components/lis3mdl/../Common/magneto.h:
