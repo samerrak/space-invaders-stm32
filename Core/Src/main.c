@@ -425,7 +425,7 @@ void StartDefaultTask(void const * argument)
 	/* Infinite loop */
 	for(;;)
 	{
-		osDelay(200);
+		osDelay(100);
 
 		if (main_menu == 1)
 		{
