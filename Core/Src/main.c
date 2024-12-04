@@ -390,11 +390,13 @@ static void MX_GPIO_Init(void)
 
 void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin) {
 	if (GPIO_Pin == myButton_Pin) {
-		if (main_menu == 1)
+		if (main_menu == 1){
 			buttonPressed++;
+			printed_menu=0;
+		} else {
+			shoot();
+		}
 	}
-
-	if (main_menu != 1) shoot();
 }
 
 
@@ -423,7 +425,7 @@ void StartDefaultTask(void const * argument)
 	/* Infinite loop */
 	for(;;)
 	{
-		osDelay(100);
+		osDelay(200);
 
 		if (main_menu == 1)
 		{
@@ -453,7 +455,7 @@ void StartDefaultTask(void const * argument)
 				free(buffer);
 				main_menu = 0;
 				HAL_UART_Transmit(&huart1, (uint8_t*)"\033[2J", strlen("\033[2J"), 500);
-				aliens_remaining = ((buttonPressed+1)%NUM_MAPS)*10;
+				aliens_remaining = ((buttonPressed)%NUM_MAPS+1)*10;
 				for (int i = 0; i < 300; i++) {
 					bullet_positions[i].row = -1;
 					bullet_positions[i].col = -1;
@@ -470,7 +472,7 @@ void StartDefaultTask(void const * argument)
 			}
 
 			if (timestamp % 12 == 0) {
-				if (timestamp < ((buttonPressed+1)%NUM_MAPS)*24 && timestamp % 24 == 0) start_wave((timestamp)/24);
+				if (timestamp < ((buttonPressed)%NUM_MAPS+1)*24 && timestamp % 24 == 0) start_wave((timestamp)/24);
 				moveAliens = 1;
 			}
 			HAL_UART_Transmit(&huart1, (uint8_t*)"\033[H", strlen("\033[H"), 100);
